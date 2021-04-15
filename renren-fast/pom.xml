@@ -8,11 +8,6 @@
 	<packaging>jar</packaging>
 	<description>renren-fast</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.4.RELEASE</version>
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,13 +37,12 @@
 		<hutool.version>4.1.1</hutool.version>
 		<lombok.version>1.18.4</lombok.version>
 
-		<!--wagon plugin 配置-->
-		<service-path>/work/renren</service-path>
-		<pack-name>${project.artifactId}-${project.version}.jar</pack-name>
-		<remote-addr>192.168.1.10:22</remote-addr>
-		<remote-username>root</remote-username>
-		<remote-passwd>123456</remote-passwd>
 	</properties>
+	<parent>
+		<artifactId>gulimall</artifactId>
+		<groupId>cn.actional.gulimall</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
 	<dependencies>
 		<dependency>
@@ -233,102 +227,5 @@
 			<version>${lombok.version}</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<finalName>${project.artifactId}</finalName>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>2.8</version>
-			</extension>
-		</extensions>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<fork>true</fork>
-				</configuration>
-			</plugin>
-			<!-- 跳过单元测试 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0</version>
-				<configuration>
-					<fromFile>target/${pack-name}</fromFile>
-					<url><![CDATA[scp://${remote-username}:${remote-passwd}@${remote-addr}${service-path}]]></url>
-					<commands>
-						<!-- Kill Old Process -->
-						<command>kill -9 `ps -ef |grep ${project.artifactId}.jar|grep -v "grep" |awk '{print $2}'`</command>
-						<!-- Restart jar package，write result into renren.log -->
-						<command><![CDATA[nohup java -jar ${service-path}/${pack-name} --spring.profiles.active=test > ${service-path}/renren.log 2>&1 & ]]></command>
-						<command><![CDATA[netstat -nptl]]></command>
-						<command><![CDATA[ps -ef | grep java | grep -v grep]]></command>
-					</commands>
-					<!-- 运行命令 mvn clean package wagon:upload-single wagon:sshexec-->
-					<displayCommandOutputs>true</displayCommandOutputs>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.14</version>
-				<!--<executions>-->
-					<!--<execution>-->
-						<!--<phase>package</phase>-->
-						<!--<goals>-->
-							<!--<goal>build</goal>-->
-						<!--</goals>-->
-					<!--</execution>-->
-				<!--</executions>-->
-				<configuration>
-					<imageName>renren/fast</imageName>
-					<dockerDirectory>${project.basedir}</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
-				<!-- 运行命令 mvn clean package docker:build 打包并生成docker镜像 -->
-			</plugin>
-		</plugins>
-	</build>
-
-	<repositories>
-		<repository>
-			<id>public</id>
-			<name>aliyun nexus</name>
-			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>public</id>
-			<name>aliyun nexus</name>
-			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>
