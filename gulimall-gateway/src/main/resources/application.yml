@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: admin_route
+          # lb 表示负载均衡  load balancing
+          uri: lb://renren-fast
+          predicates:
+            # 匹配根路径
+            - Path=/api/**
+          filters:
+            # 重写路径
+            - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+
+## 前端项目， 都带有 /api
