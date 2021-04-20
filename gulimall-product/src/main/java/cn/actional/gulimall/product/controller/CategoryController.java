@@ -1,20 +1,16 @@
 package cn.actional.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import cn.actional.common.utils.R;
+import cn.actional.gulimall.product.entity.CategoryEntity;
+import cn.actional.gulimall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.actional.gulimall.product.entity.CategoryEntity;
-import cn.actional.gulimall.product.service.CategoryService;
-import cn.actional.common.utils.PageUtils;
-import cn.actional.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
 
 
 
@@ -46,9 +42,6 @@ public class CategoryController {
     }
 
 
-    /**
-     * 信息
-     */
     @RequestMapping("/info/{catId}")
     // @RequiresPermissions("product:category:info")
     public R info(@PathVariable("catId") Long catId){
@@ -68,6 +61,8 @@ public class CategoryController {
         return R.ok();
     }
 
+
+
     /**
      * 修改
      */
@@ -78,6 +73,19 @@ public class CategoryController {
 
         return R.ok();
     }
+
+    /**
+     * 修改拖拽节点的层级和排序
+     */
+    @RequestMapping("/update/sort")
+    // @RequiresPermissions("product:category:update")
+    public R updateSort(@RequestBody List<CategoryEntity> category) {
+        categoryService.updateBatchById(category);
+
+        return R.ok();
+    }
+
+
 
     /**
      * 删除
@@ -91,5 +99,7 @@ public class CategoryController {
 
         return R.ok();
     }
+
+
 
 }

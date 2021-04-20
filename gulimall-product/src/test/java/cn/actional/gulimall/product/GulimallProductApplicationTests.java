@@ -1,7 +1,9 @@
 package cn.actional.gulimall.product;
 
+
 import cn.actional.gulimall.product.entity.BrandEntity;
 import cn.actional.gulimall.product.service.BrandService;
+import cn.actional.gulimall.product.service.CategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GulimallProductApplicationTests {
 
+    @Autowired
+    private CategoryService categoryService;
     private BrandService brandService;
 
     @Autowired
@@ -31,6 +36,14 @@ public class GulimallProductApplicationTests {
         //brandService.updateById(brandEntity);
         BrandEntity one = brandService.getOne(new QueryWrapper<BrandEntity>().eq("brand_id", 1L));
         System.out.println(one);
+    }
+
+    @Test
+    public void getCatPath() {
+        Long[] catelogPath = categoryService.findCatelogPath(225L);
+        for (Long aLong : catelogPath) {
+            System.out.println(aLong);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package cn.actional.gulimall.member;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *    3) 开启远程调用功能
  * @author actional
  */
+@EnableDiscoveryClient
 @EnableFeignClients(basePackages = "cn.actional.gulimall.member.feign")
 @SpringBootApplication
 public class GulimallMemberApplication {

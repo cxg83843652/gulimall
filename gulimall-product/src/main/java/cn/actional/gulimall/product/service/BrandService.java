@@ -15,6 +15,11 @@ import java.util.Map;
  */
 public interface BrandService extends IService<BrandEntity> {
 
+    /**
+     *  分页条件查询
+     * @param params 条件
+     * @return       分页数据
+     */
     PageUtils queryPage(Map<String, Object> params);
 }
 

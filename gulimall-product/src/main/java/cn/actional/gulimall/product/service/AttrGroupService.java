@@ -15,6 +15,19 @@ import java.util.Map;
  */
 public interface AttrGroupService extends IService<AttrGroupEntity> {
 
+    /**
+     *  分页查询所有
+     * @param params 分页参数
+     * @return       分页对象
+     */
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     *  分页查询通过 catlogId
+     * @param params     分页参数
+     * @param catelogId  id
+     * @return           分页对象
+     */
+    PageUtils queryPage(Map<String, Object> params, Long catelogId);
 }
 

@@ -1,19 +1,15 @@
 package cn.actional.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import cn.actional.gulimall.product.entity.AttrGroupEntity;
-import cn.actional.gulimall.product.service.AttrGroupService;
 import cn.actional.common.utils.PageUtils;
 import cn.actional.common.utils.R;
+import cn.actional.gulimall.product.entity.AttrGroupEntity;
+import cn.actional.gulimall.product.service.AttrGroupService;
+import cn.actional.gulimall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -28,6 +24,12 @@ import cn.actional.common.utils.R;
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
     private AttrGroupService attrGroupService;
+    private CategoryService categoryService;
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @Autowired
     public void setAttrGroupService(AttrGroupService attrGroupService) {
@@ -37,11 +39,10 @@ public class AttrGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list/{catelogId}")
     // @RequiresPermissions("product:attrgroup:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = attrGroupService.queryPage(params);
-
+    public R list(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId){
+        PageUtils page = attrGroupService.queryPage(params, catelogId);
         return R.ok().put("page", page);
     }
 
@@ -53,9 +54,11 @@ public class AttrGroupController {
     // @RequiresPermissions("product:attrgroup:info")
     public R info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
-
+		attrGroup.setCatelogPath(categoryService.findCatelogPath(attrGroup.getCatelogId()));
         return R.ok().put("attrGroup", attrGroup);
     }
+
+
 
     /**
      * 保存

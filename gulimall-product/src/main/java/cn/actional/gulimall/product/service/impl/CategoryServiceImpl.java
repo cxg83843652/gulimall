@@ -1,21 +1,17 @@
 package cn.actional.gulimall.product.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.actional.common.utils.PageUtils;
 import cn.actional.common.utils.Query;
-
 import cn.actional.gulimall.product.dao.CategoryDao;
 import cn.actional.gulimall.product.entity.CategoryEntity;
 import cn.actional.gulimall.product.service.CategoryService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 商品三级分类
@@ -52,6 +48,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         // TODO 不知道具体业务需求，  检查当前删除的菜单，是否被别的地方引用
         this.removeByIds(ids);
         // 逻辑删除
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        findParentPath(catelogId, paths);
+        Collections.reverse(paths);
+        return paths.toArray(new Long[0]);
+    }
+
+    private void findParentPath(Long catelogId, List<Long> paths) {
+        paths.add(catelogId);
+        CategoryEntity entity = this.getById(catelogId);
+        if (entity.getParentCid() != 0) {
+            findParentPath(entity.getParentCid(), paths);
+        }
     }
 
     /**
